@@ -63,11 +63,13 @@ function renderNotesList(notes) {
     notesList.innerHTML = '';
 
     if (notes.length === 0) {
+        // If there's nothing saved yet, display this message
         notesList.innerHTML = '<li style="padding: 20px; text-align: center; color: #999;">No notes found</li>';
         return;
     }
 
     notes.forEach(note => {
+        // Otherwise, list out all the notes
         const li = document.createElement('li');
         li.className = 'note-item';
         if (note.id === currentNoteId) li.classList.add('active');
@@ -116,6 +118,7 @@ async function loadNote(id) {
  */
 async function createNewNote() {
     try {
+        // Try to make template for user
         const response = await fetch(`${API_BASE}?action=create`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -141,17 +144,20 @@ async function createNewNote() {
  * Save current note
  */
 async function saveCurrentNote() {
+    // Is there even a note to save in the first place?
     if (!currentNoteId) return;
 
     const title = noteTitle.value.trim();
     const content = noteContent.value.trim();
 
     if (!title || !content) {
+        // Make sure it's not blank or null
         showNotification('Title and content cannot be empty', 'error');
         return;
     }
 
     try {
+        // Make sure we don't get 2 save inputs at the same time, and commuincate this to the user
         saveBtn.disabled = true;
         saveBtn.textContent = 'Saving...';
 
@@ -170,6 +176,7 @@ async function saveCurrentNote() {
         console.error('Error saving note:', error);
         showNotification('Failed to save note', 'error');
     } finally {
+        // Reset our button
         saveBtn.disabled = false;
         saveBtn.textContent = 'Save';
     }
@@ -179,13 +186,16 @@ async function saveCurrentNote() {
  * Delete current note
  */
 async function deleteCurrentNote() {
+    // Is there even a note to delete in the first place?
     if (!currentNoteId) return;
 
     if (!window.confirm('Are you sure you want to delete this note? This cannot be undone.')) {
+        // Give user a chance to reconsider
         return;
     }
 
     try {
+        // Make sure we don't get 2 delete inputs at the same time
         deleteBtn.disabled = true;
         const response = await fetch(`${API_BASE}?action=delete&id=${currentNoteId}`, {
             method: 'DELETE'
@@ -193,6 +203,7 @@ async function deleteCurrentNote() {
 
         if (!response.ok) throw new Error('Failed to delete note');
 
+        // Remove thee note from the frontend too
         currentNoteId = null;
         emptyState.classList.remove('hidden');
         editor.classList.add('hidden');
@@ -202,6 +213,7 @@ async function deleteCurrentNote() {
         console.error('Error deleting note:', error);
         showNotification('Failed to delete note', 'error');
     } finally {
+        // Reset the button
         deleteBtn.disabled = false;
     }
 }
@@ -213,6 +225,7 @@ async function handleSearch(e) {
     const query = e.target.value.trim();
 
     if (query.length === 0) {
+        // If the user didn't search for anything specific, show all notes
         renderNotesList(allNotes);
         return;
     }
@@ -295,3 +308,4 @@ function showNotification(message, type = 'success') {
     // Optional: You can replace this with a toast notification system
     // For now, we'll keep it simple
 }
+
