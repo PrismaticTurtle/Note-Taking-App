@@ -1,3 +1,5 @@
+-- This file exists to quickly create a DB to use with the app using SQL Queries
+
 -- Create database
 CREATE DATABASE IF NOT EXISTS notes_app;
 USE notes_app;
@@ -18,3 +20,4 @@ CREATE TABLE IF NOT EXISTS notes (
 -- INSERT INTO notes (title, content) VALUES 
 -- ('Welcome', 'This is your first note!'),
 -- ('Plan for today', 'Buy groceries, finish project, exercise');
+
