@@ -1,3 +1,5 @@
+/* This is used to style the frontend */
+
 * {
     margin: 0;
     padding: 0;
@@ -5,6 +7,7 @@
 }
 
 :root {
+    /* ========== COLOURS ========== */
     --primary-color: #054054;
     --success-color: #06da94;
     --danger-color: #ef4444;
@@ -332,3 +335,4 @@ body {
 .note-item {
     animation: slideIn 0.2s ease-out;
 }
+
