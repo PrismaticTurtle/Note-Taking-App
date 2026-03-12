@@ -3,12 +3,14 @@
  * Database Configuration
  */
 
+// Basic DB info
 define('DB_HOST', 'localhost');
 define('DB_USER', 'root');
 define('DB_PASS', '');
 define('DB_NAME', 'notes_app');
 
 try {
+    // Make sure we can connect with DB using above info
     $pdo = new PDO(
         "mysql:host=" . DB_HOST . ";dbname=" . DB_NAME,
         DB_USER,
@@ -22,3 +24,4 @@ try {
     http_response_code(500);
     die(json_encode(['error' => 'Database connection failed']));
 }
+
