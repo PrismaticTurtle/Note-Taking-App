@@ -1,3 +1,4 @@
+<!--This is the frontend that gathers data from the user via an HTML Form -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,6 +6,7 @@
     <title>My Note App</title>
 </head>
 <body>
+    <!-- Template Note -->
     <h1>Add a New Note</h1>
     <form id="noteForm">
         <input type="text" id="noteTitle" placeholder="Title" required><br>
@@ -65,4 +67,5 @@
         
     </script>
 </body>
+
 </html>
