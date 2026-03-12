@@ -20,6 +20,7 @@ $method = $_SERVER['REQUEST_METHOD'];
 $action = isset($_GET['action']) ? $_GET['action'] : '';
 
 try {
+    // Are we getting info correctly?
     switch ($action) {
         case 'create':
             if ($method !== 'POST') throw new Exception('Method not allowed', 405);
@@ -69,6 +70,7 @@ function createNote() {
     $data = json_decode(file_get_contents('php://input'), true);
     
     if (!isset($data['title']) || !isset($data['content'])) {
+        // No blank notes/titles
         throw new Exception('Title and content are required', 400);
     }
 
@@ -76,6 +78,7 @@ function createNote() {
     $content = trim($data['content']);
 
     if (empty($title) || empty($content)) {
+        // No blank notes/tiles
         throw new Exception('Title and content cannot be empty', 400);
     }
 
@@ -83,6 +86,7 @@ function createNote() {
     $stmt->execute([$title, $content]);
 
     http_response_code(201);
+    // Return result
     echo json_encode([
         'success' => true,
         'id' => $pdo->lastInsertId(),
@@ -97,6 +101,7 @@ function readNote() {
     global $pdo;
     
     if (!isset($_GET['id'])) {
+        // Is there even a note to read in the first place?
         throw new Exception('Note ID is required', 400);
     }
 
@@ -107,9 +112,11 @@ function readNote() {
     $note = $stmt->fetch();
 
     if (!$note) {
+        // make sure the note exists
         throw new Exception('Note not found', 404);
     }
 
+    // Return result
     echo json_encode($note);
 }
 
@@ -137,6 +144,7 @@ function listNotes() {
     $stmt->execute([$perPage, $offset]);
     $notes = $stmt->fetchAll();
 
+    // Return results
     echo json_encode([
         'notes' => $notes,
         'pagination' => [
@@ -155,6 +163,7 @@ function updateNote() {
     global $pdo;
     
     if (!isset($_GET['id'])) {
+        // Is there even a note to update in the first place?
         throw new Exception('Note ID is required', 400);
     }
 
@@ -175,6 +184,7 @@ function updateNote() {
     if (isset($data['title'])) {
         $title = trim($data['title']);
         if (empty($title)) {
+            // Don't save blank titles
             throw new Exception('Title cannot be empty', 400);
         }
         $updates[] = 'title = ?';
@@ -184,6 +194,7 @@ function updateNote() {
     if (isset($data['content'])) {
         $content = trim($data['content']);
         if (empty($content)) {
+            // Don't save blank notes
             throw new Exception('Content cannot be empty', 400);
         }
         $updates[] = 'content = ?';
@@ -191,6 +202,7 @@ function updateNote() {
     }
 
     if (empty($updates)) {
+        // User just sent the same note back
         throw new Exception('No fields to update', 400);
     }
 
@@ -199,6 +211,7 @@ function updateNote() {
     $stmt = $pdo->prepare($sql);
     $stmt->execute($params);
 
+    // Return result
     echo json_encode([
         'success' => true,
         'message' => 'Note updated successfully'
@@ -212,6 +225,7 @@ function deleteNote() {
     global $pdo;
     
     if (!isset($_GET['id'])) {
+        // Is there even a note to delete in the first place?
         throw new Exception('Note ID is required', 400);
     }
 
@@ -221,9 +235,11 @@ function deleteNote() {
     $stmt->execute([$id]);
 
     if ($stmt->rowCount() === 0) {
+        // The note user is trying to delete doesn't exist
         throw new Exception('Note not found', 404);
     }
 
+    // Return result
     echo json_encode([
         'success' => true,
         'message' => 'Note deleted successfully'
@@ -237,11 +253,13 @@ function searchNotes() {
     global $pdo;
     
     if (!isset($_GET['q'])) {
+        // Is there even a query to use?
         throw new Exception('Search query is required', 400);
     }
 
     $query = trim($_GET['q']);
     if (empty($query)) {
+        // Don't search for nothing
         throw new Exception('Search query cannot be empty', 400);
     }
 
@@ -255,9 +273,11 @@ function searchNotes() {
     $stmt->execute([$query]);
     $notes = $stmt->fetchAll();
 
+    // Return result
     echo json_encode([
         'query' => $query,
         'results' => $notes,
         'count' => count($notes)
     ]);
 }
+
